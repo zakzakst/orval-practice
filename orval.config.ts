@@ -6,19 +6,19 @@ export default defineConfig({
   usersApi: {
     input: "./openapi/users.yaml",
     output: {
-      target: "./src/api/users.ts",
+      target: "./src/orval/users.ts",
       client: "swr",
       baseUrl: "/api",
-      // mock: true,
+      mock: true,
     },
   },
   todosApi: {
     input: "./openapi/todos.yaml",
     output: {
-      target: "./src/api/todos.ts",
+      target: "./src/orval/todos.ts",
       client: "swr",
       baseUrl: "/api",
-      // mock: true,
+      mock: true,
     },
   },
 });

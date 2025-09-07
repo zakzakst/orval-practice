@@ -23,6 +23,16 @@ import type {
   SWRMutationConfiguration
 } from 'swr/mutation';
 
+import {
+  faker
+} from '@faker-js/faker';
+
+import {
+  HttpResponse,
+  delay,
+  http
+} from 'msw';
+
 export interface User {
   id?: number;
   name?: string;
@@ -186,3 +196,48 @@ export const useDeleteUsersId = <TError = AxiosError<unknown>>(
     ...query
   }
 }
+
+
+export const getGetUsersResponseMock = (overrideResponse: Partial< GetUsers200 > = {}): GetUsers200 => ({total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), page: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), pageSize: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), users: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), ...overrideResponse})
+
+export const getPostUsersResponseMock = (overrideResponse: Partial< User > = {}): User => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
+
+
+export const getGetUsersMockHandler = (overrideResponse?: GetUsers200 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GetUsers200> | GetUsers200)) => {
+  return http.get('*/users', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetUsersResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getPostUsersMockHandler = (overrideResponse?: User | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<User> | User)) => {
+  return http.post('*/users', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostUsersResponseMock()),
+      { status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getDeleteUsersIdMockHandler = (overrideResponse?: null | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<null> | null)) => {
+  return http.delete('*/users/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 204,
+        
+      })
+  })
+}
+export const getUsersAPIMock = () => [
+  getGetUsersMockHandler(),
+  getPostUsersMockHandler(),
+  getDeleteUsersIdMockHandler()
+]

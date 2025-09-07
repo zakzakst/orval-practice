@@ -23,6 +23,16 @@ import type {
   SWRMutationConfiguration
 } from 'swr/mutation';
 
+import {
+  faker
+} from '@faker-js/faker';
+
+import {
+  HttpResponse,
+  delay,
+  http
+} from 'msw';
+
 export interface Todo {
   id?: number;
   name?: string;
@@ -186,3 +196,48 @@ export const useDeleteTodosId = <TError = AxiosError<unknown>>(
     ...query
   }
 }
+
+
+export const getGetTodosResponseMock = (overrideResponse: Partial< GetTodos200 > = {}): GetTodos200 => ({total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), page: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), pageSize: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), todos: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), ...overrideResponse})
+
+export const getPostTodosResponseMock = (overrideResponse: Partial< Todo > = {}): Todo => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
+
+
+export const getGetTodosMockHandler = (overrideResponse?: GetTodos200 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GetTodos200> | GetTodos200)) => {
+  return http.get('*/todos', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetTodosResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getPostTodosMockHandler = (overrideResponse?: Todo | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<Todo> | Todo)) => {
+  return http.post('*/todos', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostTodosResponseMock()),
+      { status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getDeleteTodosIdMockHandler = (overrideResponse?: null | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<null> | null)) => {
+  return http.delete('*/todos/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 204,
+        
+      })
+  })
+}
+export const getTodosAPIMock = () => [
+  getGetTodosMockHandler(),
+  getPostTodosMockHandler(),
+  getDeleteTodosIdMockHandler()
+]
