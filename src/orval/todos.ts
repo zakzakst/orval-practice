@@ -4,13 +4,6 @@
  * Todos API
  * OpenAPI spec version: 1.0.0
  */
-import axios from 'axios';
-import type {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse
-} from 'axios';
-
 import useSwr from 'swr';
 import type {
   Arguments,
@@ -73,34 +66,73 @@ export type GetTodos200 = {
 /**
  * @summary Get all todos
  */
-export const getTodos = (
-    params?: GetTodosParams, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<GetTodos200>> => {
-    return axios.get(
-      `/api/todos`,{
+export type getTodosResponse200 = {
+  data: GetTodos200
+  status: 200
+}
+
+export type getTodosResponse500 = {
+  data: ErrorResponse
+  status: 500
+}
+    
+export type getTodosResponseComposite = getTodosResponse200 | getTodosResponse500;
+    
+export type getTodosResponse = getTodosResponseComposite & {
+  headers: Headers;
+}
+
+export const getGetTodosUrl = (params?: GetTodosParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/todos?${stringifiedParams}` : `/api/todos`
+}
+
+export const getTodos = async (params?: GetTodosParams, options?: RequestInit): Promise<getTodosResponse> => {
+  
+  const res = await fetch(getGetTodosUrl(params),
+  {      
     ...options,
-        params: {...params, ...options?.params},}
-    );
+    method: 'GET'
+    
+    
   }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
+  const data: getTodosResponse['data'] = body ? JSON.parse(body) : {}
+
+  return { data, status: res.status, headers: res.headers } as getTodosResponse
+}
+
 
 
 
 export const getGetTodosKey = (params?: GetTodosParams,) => [`/api/todos`, ...(params ? [params]: [])] as const;
 
 export type GetTodosQueryResult = NonNullable<Awaited<ReturnType<typeof getTodos>>>
-export type GetTodosQueryError = AxiosError<ErrorResponse>
+export type GetTodosQueryError = Promise<ErrorResponse>
 
 /**
  * @summary Get all todos
  */
-export const useGetTodos = <TError = AxiosError<ErrorResponse>>(
-  params?: GetTodosParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof getTodos>>, TError> & { swrKey?: Key, enabled?: boolean }, axios?: AxiosRequestConfig }
+export const useGetTodos = <TError = Promise<ErrorResponse>>(
+  params?: GetTodosParams, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof getTodos>>, TError> & { swrKey?: Key, enabled?: boolean }, fetch?: RequestInit }
 ) => {
-  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+  const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
 
   const isEnabled = swrOptions?.enabled !== false
   const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? getGetTodosKey(params) : null);
-  const swrFn = () => getTodos(params, axiosOptions)
+  const swrFn = () => getTodos(params, fetchOptions)
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
 
@@ -113,38 +145,67 @@ export const useGetTodos = <TError = AxiosError<ErrorResponse>>(
 /**
  * @summary Create a new todo
  */
-export const postTodos = (
-    todoInput: TodoInput, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Todo>> => {
-    return axios.post(
-      `/api/todos`,
-      todoInput,options
-    );
+export type postTodosResponse201 = {
+  data: Todo
+  status: 201
+}
+    
+export type postTodosResponseComposite = postTodosResponse201;
+    
+export type postTodosResponse = postTodosResponseComposite & {
+  headers: Headers;
+}
+
+export const getPostTodosUrl = () => {
+
+
+  
+
+  return `/api/todos`
+}
+
+export const postTodos = async (todoInput: TodoInput, options?: RequestInit): Promise<postTodosResponse> => {
+  
+  const res = await fetch(getPostTodosUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      todoInput,)
   }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
+  const data: postTodosResponse['data'] = body ? JSON.parse(body) : {}
+
+  return { data, status: res.status, headers: res.headers } as postTodosResponse
+}
 
 
 
-export const getPostTodosMutationFetcher = ( options?: AxiosRequestConfig) => {
-  return (_: Key, { arg }: { arg: TodoInput }): Promise<AxiosResponse<Todo>> => {
+
+export const getPostTodosMutationFetcher = ( options?: RequestInit) => {
+  return (_: Key, { arg }: { arg: TodoInput }): Promise<postTodosResponse> => {
     return postTodos(arg, options);
   }
 }
 export const getPostTodosMutationKey = () => [`/api/todos`] as const;
 
 export type PostTodosMutationResult = NonNullable<Awaited<ReturnType<typeof postTodos>>>
-export type PostTodosMutationError = AxiosError<unknown>
+export type PostTodosMutationError = Promise<unknown>
 
 /**
  * @summary Create a new todo
  */
-export const usePostTodos = <TError = AxiosError<unknown>>(
-   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof postTodos>>, TError, Key, TodoInput, Awaited<ReturnType<typeof postTodos>>> & { swrKey?: string }, axios?: AxiosRequestConfig}
+export const usePostTodos = <TError = Promise<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof postTodos>>, TError, Key, TodoInput, Awaited<ReturnType<typeof postTodos>>> & { swrKey?: string }, fetch?: RequestInit}
 ) => {
 
-  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+  const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
 
   const swrKey = swrOptions?.swrKey ?? getPostTodosMutationKey();
-  const swrFn = getPostTodosMutationFetcher(axiosOptions);
+  const swrFn = getPostTodosMutationFetcher(fetchOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
@@ -157,37 +218,66 @@ export const usePostTodos = <TError = AxiosError<unknown>>(
 /**
  * @summary Delete a todo by ID
  */
-export const deleteTodosId = (
-    id: number, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<null>> => {
-    return axios.delete(
-      `/api/todos/${id}`,options
-    );
+export type deleteTodosIdResponse204 = {
+  data: null
+  status: 204
+}
+    
+export type deleteTodosIdResponseComposite = deleteTodosIdResponse204;
+    
+export type deleteTodosIdResponse = deleteTodosIdResponseComposite & {
+  headers: Headers;
+}
+
+export const getDeleteTodosIdUrl = (id: number,) => {
+
+
+  
+
+  return `/api/todos/${id}`
+}
+
+export const deleteTodosId = async (id: number, options?: RequestInit): Promise<deleteTodosIdResponse> => {
+  
+  const res = await fetch(getDeleteTodosIdUrl(id),
+  {      
+    ...options,
+    method: 'DELETE'
+    
+    
   }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
+  const data: deleteTodosIdResponse['data'] = body ? JSON.parse(body) : {}
+
+  return { data, status: res.status, headers: res.headers } as deleteTodosIdResponse
+}
 
 
 
-export const getDeleteTodosIdMutationFetcher = (id: number, options?: AxiosRequestConfig) => {
-  return (_: Key, __: { arg: Arguments }): Promise<AxiosResponse<null>> => {
+
+export const getDeleteTodosIdMutationFetcher = (id: number, options?: RequestInit) => {
+  return (_: Key, __: { arg: Arguments }): Promise<deleteTodosIdResponse> => {
     return deleteTodosId(id, options);
   }
 }
 export const getDeleteTodosIdMutationKey = (id: number,) => [`/api/todos/${id}`] as const;
 
 export type DeleteTodosIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTodosId>>>
-export type DeleteTodosIdMutationError = AxiosError<unknown>
+export type DeleteTodosIdMutationError = Promise<unknown>
 
 /**
  * @summary Delete a todo by ID
  */
-export const useDeleteTodosId = <TError = AxiosError<unknown>>(
-  id: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof deleteTodosId>>, TError, Key, Arguments, Awaited<ReturnType<typeof deleteTodosId>>> & { swrKey?: string }, axios?: AxiosRequestConfig}
+export const useDeleteTodosId = <TError = Promise<unknown>>(
+  id: number, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof deleteTodosId>>, TError, Key, Arguments, Awaited<ReturnType<typeof deleteTodosId>>> & { swrKey?: string }, fetch?: RequestInit}
 ) => {
 
-  const {swr: swrOptions, axios: axiosOptions} = options ?? {}
+  const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
 
   const swrKey = swrOptions?.swrKey ?? getDeleteTodosIdMutationKey(id);
-  const swrFn = getDeleteTodosIdMutationFetcher(id, axiosOptions);
+  const swrFn = getDeleteTodosIdMutationFetcher(id, fetchOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
@@ -198,9 +288,9 @@ export const useDeleteTodosId = <TError = AxiosError<unknown>>(
 }
 
 
-export const getGetTodosResponseMock = (overrideResponse: Partial< GetTodos200 > = {}): GetTodos200 => ({total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), page: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), pageSize: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), todos: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), ...overrideResponse})
+export const getGetTodosResponseMock = (overrideResponse: Partial< GetTodos200 > = {}): GetTodos200 => ({total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined, multipleOf: undefined}), undefined]), page: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined, multipleOf: undefined}), undefined]), pageSize: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined, multipleOf: undefined}), undefined]), todos: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined, multipleOf: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), ...overrideResponse})
 
-export const getPostTodosResponseMock = (overrideResponse: Partial< Todo > = {}): Todo => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
+export const getPostTodosResponseMock = (overrideResponse: Partial< Todo > = {}): Todo => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined, multipleOf: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
 
 
 export const getGetTodosMockHandler = (overrideResponse?: GetTodos200 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GetTodos200> | GetTodos200)) => {
