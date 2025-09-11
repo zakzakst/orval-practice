@@ -90,6 +90,11 @@ components:
           type: integer
         name:
           type: string
+        status:
+          type: string
+          enum:
+            - done
+            - working
 
     TodoInput:
       type: object
