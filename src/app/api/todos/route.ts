@@ -93,20 +93,14 @@
 //   return NextResponse.json(GetTodoResponseMock);
 // };
 
-
-
-
-
-
-
 // import { NextResponse } from 'next/server'
 // import type { NextApiRequest, NextApiResponse } from 'next'
 // import { getGetTodosResponseMock, GetTodos200 } from '@/orval/todos'
- 
+
 // type ResponseData = {
 //   message: string
 // }
- 
+
 // export const GET = async (
 //   req: NextApiRequest
 // ): Promise<NextResponse<GetTodos200>> => {
