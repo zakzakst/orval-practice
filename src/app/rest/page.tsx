@@ -1,9 +1,11 @@
-import { GetComponent } from "./practice/Get"
+import { GetComponent } from "./practice/Get";
 
 const Page = () => {
-  return <div>
-    <GetComponent />
-  </div>
-}
+  return (
+    <div>
+      <GetComponent />
+    </div>
+  );
+};
 
-export default Page
+export default Page;
