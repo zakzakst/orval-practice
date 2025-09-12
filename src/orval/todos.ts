@@ -4,15 +4,13 @@
  * Todos API
  * OpenAPI spec version: 1.0.0
  */
-import useSwr from "swr";
-import type { Arguments, Key, SWRConfiguration } from "swr";
-
-import useSWRMutation from "swr/mutation";
-import type { SWRMutationConfiguration } from "swr/mutation";
 
 import { faker } from "@faker-js/faker";
-
-import { HttpResponse, delay, http } from "msw";
+import { delay, HttpResponse, http } from "msw";
+import type { Arguments, Key, SWRConfiguration } from "swr";
+import useSwr from "swr";
+import type { SWRMutationConfiguration } from "swr/mutation";
+import useSWRMutation from "swr/mutation";
 
 export interface Todo {
   id?: number;
