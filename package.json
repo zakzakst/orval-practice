@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "biome check --write --unsafe",
     "format": "biome format --write",
-    "orval": "orval"
+    "openapi:front-end": "orval",
+    "openapi:merge": "node ./node-scripts/yaml-merge.mjs",
+    "openapi:build-doc": "redocly build-docs openapi/_bundle.yaml --output=openapi/_document.html"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
@@ -20,10 +22,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
+    "@redocly/cli": "^2.1.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "js-yaml": "^4.1.0",
+    "lodash.merge": "^4.6.2",
     "msw": "^2.11.1",
     "orval": "^7.11.2",
     "tailwindcss": "^4",
