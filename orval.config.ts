@@ -1,8 +1,8 @@
 import { defineConfig } from "orval";
 
 // TODO:
-// https://orval.dev/reference/configuration/hooks
-// https://qiita.com/yassii_dev/items/619b5d7542e4b78d786a
+// https://zenn.dev/teamlab_fe/articles/b895776223a3b2
+// https://github.com/orval-labs/orval/blob/master/samples/react-query/custom-fetch/src/custom-fetch.ts
 
 export default defineConfig({
   usersApi: {
@@ -13,7 +13,10 @@ export default defineConfig({
       httpClient: "fetch",
       baseUrl: "/api",
       mock: true,
-      clean: true,
+      // clean: true,
+    },
+    hooks: {
+      afterAllFilesWrite: "npm run lint",
     },
   },
   todosApi: {
@@ -24,7 +27,10 @@ export default defineConfig({
       httpClient: "fetch",
       baseUrl: "/api",
       mock: true,
-      clean: true,
+      // clean: true,
+    },
+    hooks: {
+      afterAllFilesWrite: "npm run lint",
     },
   },
 });
