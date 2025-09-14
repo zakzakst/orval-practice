@@ -9,7 +9,7 @@ paths:
       parameters:
         - name: page
           in: query
-          description: Page number (starting from 1)
+          description: ページ番号（1が開始）
           required: false
           schema:
             type: integer

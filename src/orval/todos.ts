@@ -36,7 +36,7 @@ export interface ErrorResponse {
 
 export type GetTodosParams = {
   /**
-   * Page number (starting from 1)
+   * ページ番号（1が開始）
    * @minimum 1
    */
   page?: number;
