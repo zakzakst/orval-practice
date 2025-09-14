@@ -2,10 +2,10 @@ import fs from "node:fs";
 import yaml from "js-yaml";
 import merge from "lodash.merge";
 
-function loadYaml(filePath) {
+const loadYaml = (filePath) => {
   const content = fs.readFileSync(filePath, "utf8");
   return yaml.load(content);
-}
+};
 
 const file1 = loadYaml("openapi/todos.yaml");
 const file2 = loadYaml("openapi/users.yaml");

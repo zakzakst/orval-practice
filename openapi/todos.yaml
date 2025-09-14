@@ -1,16 +1,16 @@
 openapi: 3.0.0
 info:
-  title: Todos API
+  title: TODO API
   version: 1.0.0
 
 paths:
   /todos:
     get:
-      summary: Get all todos
+      summary: TODOを取得する
       parameters:
         - name: page
           in: query
-          description: Page number (starting from 1)
+          description: ページ番号（1が開始）
           required: false
           schema:
             type: integer
