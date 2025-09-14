@@ -11,6 +11,8 @@ const file1 = loadYaml("openapi/todos.yaml");
 const file2 = loadYaml("openapi/users.yaml");
 
 const merged = merge({}, file1, file2);
+merged.info = merged.info || {};
+merged.info.title = "My App API";
 
 fs.writeFileSync("openapi/_bundle.yaml", yaml.dump(merged), "utf8");
 console.log("_bundle.yamlを生成しました");
