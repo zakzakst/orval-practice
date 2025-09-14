@@ -1,4 +1,4 @@
 import { setupServer } from "msw/node";
-import { getUsersAPIMock } from "@/orval/users";
+import { handlers } from "../handlers/server";
 
-export const server = setupServer(...getUsersAPIMock());
+export const server = setupServer(...handlers);

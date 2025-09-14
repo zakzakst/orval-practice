@@ -1,7 +1,9 @@
-// export async function register() {
-//   // "msw/node"がNode.jsランタイムでのみ利用可能（=Edgeランタイムで利用不可）
-//   if (process.env.NEXT_RUNTIME === "nodejs") {
-//     const { initMocks } = await import("./lib/msw");
-//     initMocks();
-//   }
-// }
+export const register = async () => {
+  if (
+    process.env.NODE_ENV === "development" &&
+    process.env.NEXT_RUNTIME === "nodejs"
+  ) {
+    const { server } = await import("@/lib/msw/setup/server");
+    server.listen();
+  }
+};
