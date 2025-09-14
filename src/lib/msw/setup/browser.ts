@@ -1,4 +1,4 @@
 import { setupWorker } from "msw/browser";
-import { getUsersAPIMock } from "@/orval/users";
+import { handlers } from "../handlers/browser";
 
-export const worker = setupWorker(...getUsersAPIMock());
+export const worker = setupWorker(...handlers);
