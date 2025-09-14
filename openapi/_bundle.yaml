@@ -5,7 +5,7 @@ info:
 paths:
   /todos:
     get:
-      summary: Get all todos
+      summary: TODOを取得する
       parameters:
         - name: page
           in: query
