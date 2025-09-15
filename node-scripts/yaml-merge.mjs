@@ -7,10 +7,11 @@ const loadYaml = (filePath) => {
   return yaml.load(content);
 };
 
-const file1 = loadYaml("openapi/todos.yaml");
-const file2 = loadYaml("openapi/users.yaml");
+const todos = loadYaml("openapi/todos.yaml");
+const users = loadYaml("openapi/users.yaml");
+const schedules = loadYaml("openapi/schedules.yaml");
 
-const merged = merge({}, file1, file2);
+const merged = merge({}, todos, users, schedules);
 merged.info = merged.info || {};
 merged.info.title = "My App API";
 

@@ -1,0 +1,161 @@
+openapi: 3.1.0
+info:
+  title: スケジュール API
+  version: 1.0.0
+
+paths:
+  /schedules:
+    get:
+      operationId: getSchedules
+      summary: スケジュール情報一覧を取得する
+      parameters:
+        - name: page
+          in: query
+          description: ページ番号（1からスタート）
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          description: ページあたりのスケジュール数
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: スケジュールの総数
+                  page:
+                    type: integer
+                    description: 現在のページ番号
+                  size:
+                    type: integer
+                    description: ページあたりのスケジュール数
+                  schedules:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Schedule"
+        "500":
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /schedules/{id}:
+    get:
+      operationId: getSchedule
+      summary: 対象のスケジュール情報を取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedule"
+        "404":
+          description: 対象のスケジュールが存在しない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      operationId: updateSchedule
+      summary: 対象のスケジュールを更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                title:
+                  type: string
+                detail:
+                  type: string
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedule"
+        "404":
+          description: 対象のスケジュールが存在しない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+          format: date
+        title:
+          type: string
+        detail:
+          type: string
+          format: markdown
+      required:
+        - id
+        - date
+        - title
+        - detail
+      example:
+        id: "abc123"
+        date: "2025-09-16"
+        title: "定例会議"
+        detail: "# 議題\n- 来週のリリース手順について認識合わせ\n- 各メンバーの作業進捗確認"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: "エラーが発生しました"
