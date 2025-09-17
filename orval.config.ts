@@ -14,6 +14,17 @@ export default defineConfig({
       baseUrl: "/api",
       mock: true,
       // clean: true,
+      override: {
+        // TODO: 上手くいかない、詳しく調査する
+        operations: {
+          getSchedules: {
+            mutator: {
+              path: "./openapi/custom-fetch.ts",
+              name: "customFetch",
+            },
+          },
+        },
+      },
     },
     hooks: {
       afterAllFilesWrite: "npm run lint",
