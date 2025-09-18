@@ -12,6 +12,7 @@ import useSwr from "swr";
 import type { SWRMutationConfiguration } from "swr/mutation";
 import useSWRMutation from "swr/mutation";
 
+import { customFetch } from "../../openapi/custom-fetch";
 export interface User {
   id?: number;
   name?: string;
@@ -48,6 +49,8 @@ export type GetUsers200 = {
   pageSize?: number;
   users?: User[];
 };
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * @summary Get all users
@@ -90,15 +93,10 @@ export const getUsers = async (
   params?: GetUsersParams,
   options?: RequestInit,
 ): Promise<getUsersResponse> => {
-  const res = await fetch(getGetUsersUrl(params), {
+  return customFetch<getUsersResponse>(getGetUsersUrl(params), {
     ...options,
     method: "GET",
   });
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  const data: getUsersResponse["data"] = body ? JSON.parse(body) : {};
-
-  return { data, status: res.status, headers: res.headers } as getUsersResponse;
 };
 
 export const getGetUsersKey = (params?: GetUsersParams) =>
@@ -107,27 +105,27 @@ export const getGetUsersKey = (params?: GetUsersParams) =>
 export type GetUsersQueryResult = NonNullable<
   Awaited<ReturnType<typeof getUsers>>
 >;
-export type GetUsersQueryError = Promise<ErrorResponse>;
+export type GetUsersQueryError = ErrorResponse;
 
 /**
  * @summary Get all users
  */
-export const useGetUsers = <TError = Promise<ErrorResponse>>(
+export const useGetUsers = <TError = ErrorResponse>(
   params?: GetUsersParams,
   options?: {
     swr?: SWRConfiguration<Awaited<ReturnType<typeof getUsers>>, TError> & {
       swrKey?: Key;
       enabled?: boolean;
     };
-    fetch?: RequestInit;
+    request?: SecondParameter<typeof customFetch>;
   },
 ) => {
-  const { swr: swrOptions, fetch: fetchOptions } = options ?? {};
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
     swrOptions?.swrKey ?? (() => (isEnabled ? getGetUsersKey(params) : null));
-  const swrFn = () => getUsers(params, fetchOptions);
+  const swrFn = () => getUsers(params, requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
