@@ -48,7 +48,14 @@ export default defineConfig({
     },
   },
   schedules: {
-    input: "./openapi/schedules.yaml",
+    // input: "./openapi/schedules.yaml",
+    input: {
+      target: "./openapi/schedules.yaml",
+      filters: {
+        mode: "exclude",
+        tags: ["exclude-orval"],
+      },
+    },
     output: {
       target: "./src/orval/schedules.ts",
       client: "swr",
@@ -56,16 +63,19 @@ export default defineConfig({
       baseUrl: "/api",
       mock: true,
       // clean: true,
-      // override: {
-      //   operations: {
-      //     updateSchedule: {
-      //       mutator: {
-      //         path: "./openapi/custom-fetch2.ts",
-      //         name: "customPutFetch",
-      //       },
-      //     },
-      //   },
-      // },
+      override: {
+        operations: {
+          updateSchedule: {
+            // transformer: () => {
+            //   return {};
+            // },
+            // mutator: {
+            //   path: "./openapi/custom-fetch2.ts",
+            //   name: "customPutFetch",
+            // },
+          },
+        },
+      },
     },
     hooks: {
       afterAllFilesWrite: "npm run lint",

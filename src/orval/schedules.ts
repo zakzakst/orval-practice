@@ -9,8 +9,6 @@ import { faker } from "@faker-js/faker";
 import { delay, HttpResponse, http } from "msw";
 import type { Key, SWRConfiguration } from "swr";
 import useSwr from "swr";
-import type { SWRMutationConfiguration } from "swr/mutation";
-import useSWRMutation from "swr/mutation";
 
 export interface Schedule {
   id: string;
@@ -45,12 +43,6 @@ export type GetSchedules200 = {
   /** ページあたりのスケジュール数 */
   size?: number;
   schedules?: Schedule[];
-};
-
-export type UpdateScheduleBody = {
-  date?: string;
-  title?: string;
-  detail?: string;
 };
 
 /**
@@ -240,111 +232,6 @@ export const useGetSchedule = <TError = Promise<ErrorResponse | ErrorResponse>>(
   };
 };
 
-/**
- * @summary 対象のスケジュールを更新する
- */
-export type updateScheduleResponse200 = {
-  data: Schedule;
-  status: 200;
-};
-
-export type updateScheduleResponse404 = {
-  data: ErrorResponse;
-  status: 404;
-};
-
-export type updateScheduleResponse500 = {
-  data: ErrorResponse;
-  status: 500;
-};
-
-export type updateScheduleResponseComposite =
-  | updateScheduleResponse200
-  | updateScheduleResponse404
-  | updateScheduleResponse500;
-
-export type updateScheduleResponse = updateScheduleResponseComposite & {
-  headers: Headers;
-};
-
-export const getUpdateScheduleUrl = (id: string) => {
-  return `/api/schedules/${id}`;
-};
-
-export const updateSchedule = async (
-  id: string,
-  updateScheduleBody: UpdateScheduleBody,
-  options?: RequestInit,
-): Promise<updateScheduleResponse> => {
-  const res = await fetch(getUpdateScheduleUrl(id), {
-    ...options,
-    method: "PUT",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(updateScheduleBody),
-  });
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  const data: updateScheduleResponse["data"] = body ? JSON.parse(body) : {};
-
-  return {
-    data,
-    status: res.status,
-    headers: res.headers,
-  } as updateScheduleResponse;
-};
-
-export const getUpdateScheduleMutationFetcher = (
-  id: string,
-  options?: RequestInit,
-) => {
-  return (
-    _: Key,
-    { arg }: { arg: UpdateScheduleBody },
-  ): Promise<updateScheduleResponse> => {
-    return updateSchedule(id, arg, options);
-  };
-};
-export const getUpdateScheduleMutationKey = (id: string) =>
-  [`/api/schedules/${id}`] as const;
-
-export type UpdateScheduleMutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateSchedule>>
->;
-export type UpdateScheduleMutationError = Promise<
-  ErrorResponse | ErrorResponse
->;
-
-/**
- * @summary 対象のスケジュールを更新する
- */
-export const useUpdateSchedule = <
-  TError = Promise<ErrorResponse | ErrorResponse>,
->(
-  id: string,
-  options?: {
-    swr?: SWRMutationConfiguration<
-      Awaited<ReturnType<typeof updateSchedule>>,
-      TError,
-      Key,
-      UpdateScheduleBody,
-      Awaited<ReturnType<typeof updateSchedule>>
-    > & { swrKey?: string };
-    fetch?: RequestInit;
-  },
-) => {
-  const { swr: swrOptions, fetch: fetchOptions } = options ?? {};
-
-  const swrKey = swrOptions?.swrKey ?? getUpdateScheduleMutationKey(id);
-  const swrFn = getUpdateScheduleMutationFetcher(id, fetchOptions);
-
-  const query = useSWRMutation(swrKey, swrFn, swrOptions);
-
-  return {
-    swrKey,
-    ...query,
-  };
-};
-
 export const getGetSchedulesResponseMock = (
   overrideResponse: Partial<GetSchedules200> = {},
 ): GetSchedules200 => ({
@@ -376,16 +263,6 @@ export const getGetSchedulesResponseMock = (
 });
 
 export const getGetScheduleResponseMock = (
-  overrideResponse: Partial<Schedule> = {},
-): Schedule => ({
-  id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  date: faker.date.past().toISOString().split("T")[0],
-  title: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  detail: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  ...overrideResponse,
-});
-
-export const getUpdateScheduleResponseMock = (
   overrideResponse: Partial<Schedule> = {},
 ): Schedule => ({
   id: faker.string.alpha({ length: { min: 10, max: 20 } }),
@@ -440,31 +317,7 @@ export const getGetScheduleMockHandler = (
     );
   });
 };
-
-export const getUpdateScheduleMockHandler = (
-  overrideResponse?:
-    | Schedule
-    | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) => Promise<Schedule> | Schedule),
-) => {
-  return http.put("*/schedules/:id", async (info) => {
-    await delay(1000);
-
-    return new HttpResponse(
-      JSON.stringify(
-        overrideResponse !== undefined
-          ? typeof overrideResponse === "function"
-            ? await overrideResponse(info)
-            : overrideResponse
-          : getUpdateScheduleResponseMock(),
-      ),
-      { status: 200, headers: { "Content-Type": "application/json" } },
-    );
-  });
-};
 export const getApiMock = () => [
   getGetSchedulesMockHandler(),
   getGetScheduleMockHandler(),
-  getUpdateScheduleMockHandler(),
 ];
