@@ -86,8 +86,8 @@ paths:
 
     put:
       operationId: updateSchedule
-      tags:
-        - exclude-orval
+      # tags:
+      #   - exclude-orval
       summary: 対象のスケジュールを更新する
       parameters:
         - name: id

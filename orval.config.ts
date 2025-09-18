@@ -51,6 +51,20 @@ export default defineConfig({
     // input: "./openapi/schedules.yaml",
     input: {
       target: "./openapi/schedules.yaml",
+      override: {
+        transformer: (schema) => {
+          Object.entries(schema.paths).forEach(([path, pathItem]) => {
+            for (const method of Object.keys(pathItem)) {
+              const operation =
+                pathItem[method as "get" | "put" | "post" | "delete" | "patch"];
+              if (operation?.operationId === "updateSchedule") {
+                operation.tags = [...(operation.tags ?? []), "exclude-orval"];
+              }
+            }
+          });
+          return schema;
+        },
+      },
       filters: {
         mode: "exclude",
         tags: ["exclude-orval"],
