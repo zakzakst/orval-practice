@@ -1,0 +1,15 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "スケジュール API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/schedules": {
+      "get": {
+        "operationId": "getSchedules",
+        "summary": "スケジュール情報一覧を取得する"
+      }
+    }
+  }
+}
