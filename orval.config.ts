@@ -79,14 +79,11 @@ export default defineConfig({
       // clean: true,
       override: {
         operations: {
-          updateSchedule: {
-            // transformer: () => {
-            //   return {};
-            // },
-            // mutator: {
-            //   path: "./openapi/custom-fetch2.ts",
-            //   name: "customPutFetch",
-            // },
+          getSchedules: {
+            mutator: {
+              path: "./openapi/mock-fetch/schedules.ts",
+              name: "getSchedulesMockFetcher",
+            },
           },
         },
       },
