@@ -10,6 +10,7 @@ import { delay, HttpResponse, http } from "msw";
 import type { Key, SWRConfiguration } from "swr";
 import useSwr from "swr";
 
+import { getSchedulesMockFetcher } from "../../openapi/mock-fetch/schedules";
 export interface Schedule {
   id: string;
   date: string;
@@ -44,6 +45,8 @@ export type GetSchedules200 = {
   size?: number;
   schedules?: Schedule[];
 };
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * @summary スケジュール情報一覧を取得する
@@ -86,19 +89,13 @@ export const getSchedules = async (
   params?: GetSchedulesParams,
   options?: RequestInit,
 ): Promise<getSchedulesResponse> => {
-  const res = await fetch(getGetSchedulesUrl(params), {
-    ...options,
-    method: "GET",
-  });
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  const data: getSchedulesResponse["data"] = body ? JSON.parse(body) : {};
-
-  return {
-    data,
-    status: res.status,
-    headers: res.headers,
-  } as getSchedulesResponse;
+  return getSchedulesMockFetcher<getSchedulesResponse>(
+    getGetSchedulesUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
 };
 
 export const getGetSchedulesKey = (params?: GetSchedulesParams) =>
@@ -107,28 +104,28 @@ export const getGetSchedulesKey = (params?: GetSchedulesParams) =>
 export type GetSchedulesQueryResult = NonNullable<
   Awaited<ReturnType<typeof getSchedules>>
 >;
-export type GetSchedulesQueryError = Promise<ErrorResponse>;
+export type GetSchedulesQueryError = ErrorResponse;
 
 /**
  * @summary スケジュール情報一覧を取得する
  */
-export const useGetSchedules = <TError = Promise<ErrorResponse>>(
+export const useGetSchedules = <TError = ErrorResponse>(
   params?: GetSchedulesParams,
   options?: {
     swr?: SWRConfiguration<Awaited<ReturnType<typeof getSchedules>>, TError> & {
       swrKey?: Key;
       enabled?: boolean;
     };
-    fetch?: RequestInit;
+    request?: SecondParameter<typeof getSchedulesMockFetcher>;
   },
 ) => {
-  const { swr: swrOptions, fetch: fetchOptions } = options ?? {};
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
     swrOptions?.swrKey ??
     (() => (isEnabled ? getGetSchedulesKey(params) : null));
-  const swrFn = () => getSchedules(params, fetchOptions);
+  const swrFn = () => getSchedules(params, requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
