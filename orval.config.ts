@@ -84,6 +84,12 @@ export default defineConfig({
               path: "./openapi/mock-fetch/schedules.ts",
               name: "getSchedulesMockFetcher",
             },
+            mock: {
+              data: [
+                { id: "1", title: "Learn Orval", completed: false },
+                { id: "2", title: "Build an app", completed: true },
+              ],
+            },
           },
         },
       },

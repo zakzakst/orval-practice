@@ -229,35 +229,10 @@ export const useGetSchedule = <TError = Promise<ErrorResponse | ErrorResponse>>(
   };
 };
 
-export const getGetSchedulesResponseMock = (
-  overrideResponse: Partial<GetSchedules200> = {},
-): GetSchedules200 => ({
-  total: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
-    undefined,
-  ]),
-  page: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
-    undefined,
-  ]),
-  size: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
-    undefined,
-  ]),
-  schedules: faker.helpers.arrayElement([
-    Array.from(
-      { length: faker.number.int({ min: 1, max: 10 }) },
-      (_, i) => i + 1,
-    ).map(() => ({
-      id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      date: faker.date.past().toISOString().split("T")[0],
-      title: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      detail: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetSchedulesResponseMock = () => [
+  { id: "1", title: "Learn Orval", completed: false },
+  { id: "2", title: "Build an app", completed: true },
+];
 
 export const getGetScheduleResponseMock = (
   overrideResponse: Partial<Schedule> = {},
