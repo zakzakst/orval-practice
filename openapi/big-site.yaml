@@ -1,0 +1,124 @@
+# 参考：https://spec.api.metro.tokyo.lg.jp/spec/t001001d0000000001-1db9fd22025886d3d5c9607d5c24fdf0-0
+openapi: 3.1.0
+info:
+  title: 東京ビッグサイトのイベント情報 API
+  summary: 東京ビッグサイト10月～12月のイベント情報
+  version: 1.0.0
+
+paths:
+  /t001001d0000000001-1db9fd22025886d3d5c9607d5c24fdf0-0/json:
+    post:
+      operationId: postBigSite
+      summary: 東京ビッグサイト10月～12月のイベント情報を取得する
+      parameters:
+        - name: limit
+          in: query
+          description: 1回のAPI呼び出しで取得するデータ件数の上限を指定します
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 1000
+            default: 5
+        - name: offset
+          in: query
+          description: データの取得開始位置を指定します
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                column:
+                  $ref: "#/components/schemas/Column"
+                searchCondition:
+                  type: object
+                sortOrder:
+                  $ref: "#/components/schemas/SortOrder"
+      
+components:
+  schemas:
+    SortOrder:
+      type: string
+      enum:
+        - asc
+        - desc
+      default: asc
+      description: >
+        ソート順序を指定します。指定可能な項目は以下の通りです
+          * asc - 昇順
+          * desc - 降順
+
+    Column:
+      type: string
+      enum:
+        - 展示会名
+        - 会期(開始)
+        - 開始曜日
+        - 会期(終了)
+        - 終了曜日
+        - 利用施設
+        - 開催時間
+        - 最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了)
+        - 来場対象者
+        - 入場料について
+        - 内容
+        - 連絡先
+        - TEL
+        - URL
+
+    Relationship:
+      type: string
+      enum:
+        - eq
+        - le
+        - lt
+        - ge
+        - gt
+      description: >
+        項目名と条件の関係を指定します。指定可能な項目は以下の通りです
+          * eq - イコール
+          * le - 以下
+          * lt - より小さい
+          * ge - 以上
+          * gt - より大きい
+
+    ConditionRelationship:
+      type: string
+      enum:
+        - and
+        - or
+      default: and
+      description: >
+        `stringAndSearch`、`stringOrSearch`、`numericAndSearch`、`numericOrSearch`、`dateAndSearch`、`dateOrSearch`、`datetimeAndSearch`、`datetimeOrSearch`の間の絞り込み条件の関係を指定します。指定可能な項目は以下の通りです
+          * and - and条件(デフォルト)
+          * or - or条件
+
+    SearchCondition:
+      type: object
+      properties:
+        conditionRelationship:
+          $ref: "#/components/schemas/ConditionRelationship"
+        stringAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/Relationship"
+              condition:
+                type: string
+        stringOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/Relationship"
+              condition:
+                type: string
