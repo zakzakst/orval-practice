@@ -168,3 +168,69 @@ components:
                 $ref: "#/components/schemas/StringRelationship"
               condition:
                 type: string
+        numericAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/NumericRelationship"
+              condition:
+                type: string
+        numericOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/NumericRelationship"
+              condition:
+                type: string
+        dateAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
+        dateOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
+        datetimeAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
+        datetimeOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
