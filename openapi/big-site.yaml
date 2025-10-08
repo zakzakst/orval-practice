@@ -13,7 +13,10 @@ paths:
       parameters:
         - name: limit
           in: query
-          description: 1回のAPI呼び出しで取得するデータ件数の上限を指定します
+          description: >
+            **1回のAPI呼び出しで取得するデータ件数の上限を指定します**<br>
+            この画面でのデフォルト値は5です。<br>
+            APIを直接呼び出す場合のデフォルトは100が設定されます。最小値は0、最大値は1000です。
           schema:
             type: integer
             minimum: 0
@@ -21,34 +24,47 @@ paths:
             default: 5
         - name: offset
           in: query
-          description: データの取得開始位置を指定します
+          description: >
+            **データの取得開始位置を指定します**<br>
+            一定件数毎に分けてデータを取得する場合に利用します。
           schema:
             type: integer
       requestBody:
+        required: true
+        description: >
+          **詳細な絞り込み検索をする場合に本項目を指定してください**<br>
+          `Example Value`に指定例が表示されます。指定可能な内容を参照する場合は`Schema`を押してください。<br>
+          `>`を押すと折りたたまれた内容が表示されます。<br>
+          なお、初期表示で入力されている指定例のまま`Execute`ボタンを押下しても（`Code 400`：リクエストパラメータ不正）となります。<br>
+          簡単に実行するためには`requestBody`の中身を`{}`とすることでエラーなく取得することができます。
         content:
           application/json:
             schema:
               type: object
               properties:
                 column:
-                  $ref: "#/components/schemas/Column"
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Column"
                 searchCondition:
-                  type: object
+                  description: >
+                    **絞り込み条件を指定します**
+                  $ref: "#/components/schemas/SearchCondition"
                 sortOrder:
                   $ref: "#/components/schemas/SortOrder"
-      
+
 components:
   schemas:
     SortOrder:
+      description: >
+        ソート順序を指定します。指定可能な項目は以下の通りです
+          * asc - 昇順
+          * desc - 降順
       type: string
       enum:
         - asc
         - desc
       default: asc
-      description: >
-        ソート順序を指定します。指定可能な項目は以下の通りです
-          * asc - 昇順
-          * desc - 降順
 
     Column:
       type: string
@@ -68,14 +84,21 @@ components:
         - TEL
         - URL
 
-    Relationship:
+    StringRelationship:
+      description: >
+        項目名と条件の関係を指定します。指定可能な項目は以下の通りです
+          * eq - イコール
+          * contains - 含む
+          * startsWith - で始まる
+          * endsWith - で終わる
       type: string
       enum:
         - eq
-        - le
-        - lt
-        - ge
-        - gt
+        - contains
+        - startsWith
+        - endsWith
+
+    NumericRelationship:
       description: >
         項目名と条件の関係を指定します。指定可能な項目は以下の通りです
           * eq - イコール
@@ -83,17 +106,40 @@ components:
           * lt - より小さい
           * ge - 以上
           * gt - より大きい
+      type: string
+      enum:
+        - eq
+        - le
+        - lt
+        - ge
+        - gt
+
+    DateRelationship:
+      description: >
+        項目名と条件の関係を指定します。指定可能な項目は以下の通りです
+          * eq - イコール
+          * le - 以下
+          * lt - より小さい
+          * ge - 以上
+          * gt - より大きい
+      type: string
+      enum:
+        - eq
+        - le
+        - lt
+        - ge
+        - gt
 
     ConditionRelationship:
+      description: >
+        `stringAndSearch`、`stringOrSearch`、`numericAndSearch`、`numericOrSearch`、`dateAndSearch`、`dateOrSearch`、`datetimeAndSearch`、`datetimeOrSearch`の間の絞り込み条件の関係を指定します。指定可能な項目は以下の通りです
+          * and - and条件(デフォルト)
+          * or - or条件
       type: string
       enum:
         - and
         - or
       default: and
-      description: >
-        `stringAndSearch`、`stringOrSearch`、`numericAndSearch`、`numericOrSearch`、`dateAndSearch`、`dateOrSearch`、`datetimeAndSearch`、`datetimeOrSearch`の間の絞り込み条件の関係を指定します。指定可能な項目は以下の通りです
-          * and - and条件(デフォルト)
-          * or - or条件
 
     SearchCondition:
       type: object
@@ -108,7 +154,7 @@ components:
               column:
                 $ref: "#/components/schemas/Column"
               relationship:
-                $ref: "#/components/schemas/Relationship"
+                $ref: "#/components/schemas/StringRelationship"
               condition:
                 type: string
         stringOrSearch:
@@ -119,6 +165,72 @@ components:
               column:
                 $ref: "#/components/schemas/Column"
               relationship:
-                $ref: "#/components/schemas/Relationship"
+                $ref: "#/components/schemas/StringRelationship"
+              condition:
+                type: string
+        numericAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/NumericRelationship"
+              condition:
+                type: string
+        numericOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/NumericRelationship"
+              condition:
+                type: string
+        dateAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
+        dateOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
+        datetimeAndSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
+              condition:
+                type: string
+        datetimeOrSearch:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                $ref: "#/components/schemas/Column"
+              relationship:
+                $ref: "#/components/schemas/DateRelationship"
               condition:
                 type: string

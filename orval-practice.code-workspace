@@ -20,6 +20,9 @@
       "*": false,
       "typescript": false,
       "yaml": false
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.biome": "explicit"
     }
   }
 }
