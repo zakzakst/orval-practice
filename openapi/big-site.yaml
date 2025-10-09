@@ -72,6 +72,12 @@ paths:
                   offset:
                     type: integer
                     description: リクエスト時に指定した値が設定されます
+                  metadata:
+                    $ref: "#/components/schemas/ResponseMetadata"
+                  hits:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ResponseHit"
         "400":
           description: リクエストパラメータが不正です
         "405":
@@ -260,3 +266,75 @@ components:
                 $ref: "#/components/schemas/DateRelationship"
               condition:
                 type: string
+    ResponseMetadata:
+      type: object
+      properties:
+        apiId:
+          type: string
+          description: apiId
+        title:
+          type: string
+          description: API名
+        datasetId:
+          type: string
+          description: データセットID
+        datasetTitle:
+          type: string
+          description: データセットタイトル
+        datasetDesc:
+          type: string
+          description: データセット説明
+        dataTitle:
+          type: string
+          description: データタイトル
+        dataDesc:
+          type: string
+          description: データ説明
+        sheetname:
+          type: string
+          description: シート名
+        version:
+          type: string
+          description: 本APIのデータバージョンを示します。データの更新に合わせてバージョンも更新されます
+        created:
+          type: string
+          format: date
+          description: 作成日
+        updated:
+          type: string
+          format: date
+          description: 更新日
+    ResponseHit:
+      type: object
+      properties:
+        row:
+          type: integer
+        展示会名:
+          type: string
+        会期(開始):
+          type: string
+        開始曜日:
+          type: string
+        会期(終了):
+          type: string
+        終了曜日:
+          type: string
+        利用施設:
+          type: string
+        開催時間:
+          type: string
+        最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了):
+          type: string
+        来場対象者:
+          type: string
+        入場料について:
+          type: string
+        内容:
+          type: string
+        連絡先:
+          type: string
+        TEL:
+          type: string
+        URL:
+          type: string
+        
