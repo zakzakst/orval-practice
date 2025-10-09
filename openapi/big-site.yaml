@@ -52,6 +52,32 @@ paths:
                   $ref: "#/components/schemas/SearchCondition"
                 sortOrder:
                   $ref: "#/components/schemas/SortOrder"
+      responses:
+        "200":
+          description: 処理が正常に終了しました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: 検索結果の総件数です。limitおよびoffsetを考慮しない検索結果の件数を表示します
+                  subtotal:
+                    type: integer
+                    description: 検索結果のうち今回のレスポンスで返却している件数です
+                  limit:
+                    type: integer
+                    description: リクエスト時に指定した値が設定されます
+                  offset:
+                    type: integer
+                    description: リクエスト時に指定した値が設定されます
+        "400":
+          description: リクエストパラメータが不正です
+        "405":
+          description: APIが無効化されています
+        "500":
+          description: 内部エラーが発生しました
 
 components:
   schemas:
