@@ -50,16 +50,57 @@ export const Column = {
 /**
  * 項目名と条件の関係を指定します。指定可能な項目は以下の通りです
   * eq - イコール
+  * contains - 含む
+  * startsWith - で始まる
+  * endsWith - で終わる
+
+ */
+export type StringRelationship =
+  (typeof StringRelationship)[keyof typeof StringRelationship];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StringRelationship = {
+  eq: "eq",
+  contains: "contains",
+  startsWith: "startsWith",
+  endsWith: "endsWith",
+} as const;
+
+/**
+ * 項目名と条件の関係を指定します。指定可能な項目は以下の通りです
+  * eq - イコール
   * le - 以下
   * lt - より小さい
   * ge - 以上
   * gt - より大きい
 
  */
-export type Relationship = (typeof Relationship)[keyof typeof Relationship];
+export type NumericRelationship =
+  (typeof NumericRelationship)[keyof typeof NumericRelationship];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Relationship = {
+export const NumericRelationship = {
+  eq: "eq",
+  le: "le",
+  lt: "lt",
+  ge: "ge",
+  gt: "gt",
+} as const;
+
+/**
+ * 項目名と条件の関係を指定します。指定可能な項目は以下の通りです
+  * eq - イコール
+  * le - 以下
+  * lt - より小さい
+  * ge - 以上
+  * gt - より大きい
+
+ */
+export type DateRelationship =
+  (typeof DateRelationship)[keyof typeof DateRelationship];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DateRelationship = {
   eq: "eq",
   le: "le",
   lt: "lt",
@@ -84,13 +125,49 @@ export const ConditionRelationship = {
 
 export type SearchConditionStringAndSearchItem = {
   column?: Column;
-  relationship?: Relationship;
+  relationship?: StringRelationship;
   condition?: string;
 };
 
 export type SearchConditionStringOrSearchItem = {
   column?: Column;
-  relationship?: Relationship;
+  relationship?: StringRelationship;
+  condition?: string;
+};
+
+export type SearchConditionNumericAndSearchItem = {
+  column?: Column;
+  relationship?: NumericRelationship;
+  condition?: string;
+};
+
+export type SearchConditionNumericOrSearchItem = {
+  column?: Column;
+  relationship?: NumericRelationship;
+  condition?: string;
+};
+
+export type SearchConditionDateAndSearchItem = {
+  column?: Column;
+  relationship?: DateRelationship;
+  condition?: string;
+};
+
+export type SearchConditionDateOrSearchItem = {
+  column?: Column;
+  relationship?: DateRelationship;
+  condition?: string;
+};
+
+export type SearchConditionDatetimeAndSearchItem = {
+  column?: Column;
+  relationship?: DateRelationship;
+  condition?: string;
+};
+
+export type SearchConditionDatetimeOrSearchItem = {
+  column?: Column;
+  relationship?: DateRelationship;
   condition?: string;
 };
 
@@ -98,27 +175,91 @@ export interface SearchCondition {
   conditionRelationship?: ConditionRelationship;
   stringAndSearch?: SearchConditionStringAndSearchItem[];
   stringOrSearch?: SearchConditionStringOrSearchItem[];
+  numericAndSearch?: SearchConditionNumericAndSearchItem[];
+  numericOrSearch?: SearchConditionNumericOrSearchItem[];
+  dateAndSearch?: SearchConditionDateAndSearchItem[];
+  dateOrSearch?: SearchConditionDateOrSearchItem[];
+  datetimeAndSearch?: SearchConditionDatetimeAndSearchItem[];
+  datetimeOrSearch?: SearchConditionDatetimeOrSearchItem[];
+}
+
+export interface ResponseMetadata {
+  /** apiId */
+  apiId?: string;
+  /** API名 */
+  title?: string;
+  /** データセットID */
+  datasetId?: string;
+  /** データセットタイトル */
+  datasetTitle?: string;
+  /** データセット説明 */
+  datasetDesc?: string;
+  /** データタイトル */
+  dataTitle?: string;
+  /** データ説明 */
+  dataDesc?: string;
+  /** シート名 */
+  sheetname?: string;
+  /** 本APIのデータバージョンを示します。データの更新に合わせてバージョンも更新されます */
+  version?: string;
+  /** 作成日 */
+  created?: string;
+  /** 更新日 */
+  updated?: string;
+}
+
+export interface ResponseHit {
+  row?: number;
+  展示会名?: string;
+  "会期(開始)"?: string;
+  開始曜日?: string;
+  "会期(終了)"?: string;
+  終了曜日?: string;
+  利用施設?: string;
+  開催時間?: string;
+  "最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了)"?: string;
+  来場対象者?: string;
+  入場料について?: string;
+  内容?: string;
+  連絡先?: string;
+  TEL?: string;
+  URL?: string;
 }
 
 export type PostBigSiteParams = {
   /**
-   * 1回のAPI呼び出しで取得するデータ件数の上限を指定します
-   * @minimum 0
-   * @maximum 1000
-   */
+ * **1回のAPI呼び出しで取得するデータ件数の上限を指定します**<br> この画面でのデフォルト値は5です。<br> APIを直接呼び出す場合のデフォルトは100が設定されます。最小値は0、最大値は1000です。
+
+ * @minimum 0
+ * @maximum 1000
+ */
   limit?: number;
   /**
-   * データの取得開始位置を指定します
-   */
+ * **データの取得開始位置を指定します**<br> 一定件数毎に分けてデータを取得する場合に利用します。
+
+ */
   offset?: number;
 };
 
-export type PostBigSiteBodySearchCondition = { [key: string]: unknown };
-
 export type PostBigSiteBody = {
-  column?: Column;
-  searchCondition?: PostBigSiteBodySearchCondition;
+  column?: Column[];
+  /** **絞り込み条件を指定します**
+   */
+  searchCondition?: SearchCondition;
   sortOrder?: SortOrder;
+};
+
+export type PostBigSite200 = {
+  /** 検索結果の総件数です。limitおよびoffsetを考慮しない検索結果の件数を表示します */
+  total?: number;
+  /** 検索結果のうち今回のレスポンスで返却している件数です */
+  subtotal?: number;
+  /** リクエスト時に指定した値が設定されます */
+  limit?: number;
+  /** リクエスト時に指定した値が設定されます */
+  offset?: number;
+  metadata?: ResponseMetadata;
+  hits?: ResponseHit[];
 };
 
 /**
@@ -128,7 +269,7 @@ export const postBigSite = (
   postBigSiteBody: PostBigSiteBody,
   params?: PostBigSiteParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<unknown>> => {
+): Promise<AxiosResponse<PostBigSite200>> => {
   return axios.post(
     `https://service.api.metro.tokyo.lg.jp/api/t001001d0000000001-1db9fd22025886d3d5c9607d5c24fdf0-0/json`,
     postBigSiteBody,
@@ -146,7 +287,7 @@ export const getPostBigSiteMutationFetcher = (
   return (
     _: Key,
     { arg }: { arg: PostBigSiteBody },
-  ): Promise<AxiosResponse<unknown>> => {
+  ): Promise<AxiosResponse<PostBigSite200>> => {
     return postBigSite(arg, params, options);
   };
 };
@@ -159,12 +300,12 @@ export const getPostBigSiteMutationKey = (params?: PostBigSiteParams) =>
 export type PostBigSiteMutationResult = NonNullable<
   Awaited<ReturnType<typeof postBigSite>>
 >;
-export type PostBigSiteMutationError = AxiosError<unknown>;
+export type PostBigSiteMutationError = AxiosError<null | null | null>;
 
 /**
  * @summary 東京ビッグサイト10月～12月のイベント情報を取得する
  */
-export const usePostBigSite = <TError = AxiosError<unknown>>(
+export const usePostBigSite = <TError = AxiosError<null | null | null>>(
   params?: PostBigSiteParams,
   options?: {
     swr?: SWRMutationConfiguration<
