@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 
 // export const getSchedulesMockFetcher = <T>(
 //   url: string,
@@ -11,7 +11,7 @@ import { AxiosResponse } from "axios";
 
 export const getSchedulesMockFetcher = <T>(
   url: string,
-  options?: RequestInit
+  _options?: RequestInit,
 ): Promise<AxiosResponse<T>> => {
   console.log(`get: ${url}`);
   return Promise.resolve({

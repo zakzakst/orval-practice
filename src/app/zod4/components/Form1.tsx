@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const schema = z.object({
+const _schema = z.object({
   zod1: z.string().min(5, {
     error: "5文字以上で入力してください",
   }),

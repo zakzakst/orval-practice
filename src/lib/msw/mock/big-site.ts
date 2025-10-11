@@ -6,7 +6,7 @@ export const PostBigSiteResponseMock: PostBigSite200 = {
   limit: 10,
   offset: 0,
   metadata: {
-    apiId: 'postBigSite'
+    apiId: "postBigSite",
   },
-  hits: []
-}
+  hits: [],
+};
