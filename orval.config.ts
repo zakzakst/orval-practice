@@ -1,4 +1,5 @@
 import { defineConfig } from "orval";
+import { PostBigSiteResponseMock } from "./openapi/mock/big-site";
 
 // TODO:
 // https://zenn.dev/teamlab_fe/articles/b895776223a3b2
@@ -104,6 +105,16 @@ export default defineConfig({
       target: "./src/orval/big-site.ts",
       client: "swr",
       baseUrl: "https://service.api.metro.tokyo.lg.jp/api",
+      mock: true,
+      // override: {
+      //   operations: {
+      //     postBigSite: {
+      //       mock: {
+      //         data: PostBigSiteResponseMock,
+      //       },
+      //     },
+      //   },
+      // },
     },
     hooks: {
       afterAllFilesWrite: "npm run lint",
