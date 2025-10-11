@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DatePicker } from "@/components/common/date-picker";
 import type { Item } from "@/components/common/select-list";
 import { SelectList } from "@/components/common/select-list";
 import { Input } from "@/components/ui/input";
@@ -68,6 +69,8 @@ const VisitorItems: Item<VisitorType>[] = [
 ];
 
 export const Form = () => {
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   const [startWeekday, setStartWeekday] = useState<Weekday>();
   const [endWeekday, setEndWeekday] = useState<Weekday>();
   const [endTime, setEndTime] = useState<EndTimeMark>();
@@ -78,6 +81,7 @@ export const Form = () => {
       {/* 展示会名 */}
       <Input name="展示会名" />
       {/* 会期(開始) */}
+      <DatePicker className="w-full" date={startDate} onChange={setStartDate} />
       {/* 開始曜日 */}
       <SelectList<Weekday>
         className="w-full"
@@ -87,6 +91,7 @@ export const Form = () => {
         placeholder="プレースホルダー文言"
       />
       {/* 会期(終了) */}
+      <DatePicker className="w-full" date={endDate} onChange={setEndDate} />
       {/* 終了曜日 */}
       <SelectList<Weekday>
         className="w-full"
