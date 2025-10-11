@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from "react";
 import { usePostBigSite } from "@/orval/big-site";
 
 const Page = () => {
@@ -8,6 +9,10 @@ const Page = () => {
     isMutating,
     trigger,
   } = usePostBigSite();
+
+  useEffect(() => {
+    trigger({})
+  }, [trigger])
 
   return (
     <div>

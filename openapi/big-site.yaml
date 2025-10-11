@@ -67,10 +67,10 @@ paths:
                     type: integer
                     description: 検索結果のうち今回のレスポンスで返却している件数です
                   limit:
-                    type: integer
+                    type: [integer, 'null']
                     description: リクエスト時に指定した値が設定されます
                   offset:
-                    type: integer
+                    type: [integer, 'null']
                     description: リクエスト時に指定した値が設定されます
                   metadata:
                     $ref: "#/components/schemas/ResponseMetadata"
@@ -87,6 +87,16 @@ paths:
                   - hits
         "400":
           description: リクエストパラメータが不正です
+          # content:
+          #   application/json:
+          #     schema:
+          #       type: object
+          #       properties:
+          #         message:
+          #           type: string
+          #           description: エラー内容の説明テキスト
+          #       required:
+          #         - message
         "405":
           description: APIが無効化されています
         "500":
