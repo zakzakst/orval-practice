@@ -213,19 +213,51 @@ export interface ResponseHit {
   row?: number;
   展示会名?: string;
   "会期(開始)"?: string;
-  開始曜日?: string;
+  開始曜日?: Weekday;
   "会期(終了)"?: string;
-  終了曜日?: string;
+  終了曜日?: Weekday;
   利用施設?: string;
   開催時間?: string;
-  "最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了)"?: string;
-  来場対象者?: string;
+  "最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了)"?: EndTimeMark;
+  来場対象者?: VisitorType;
   入場料について?: string;
   内容?: string;
   連絡先?: string;
   TEL?: string;
   URL?: string;
 }
+
+export type Weekday = (typeof Weekday)[keyof typeof Weekday];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Weekday = {
+  月: "月",
+  火: "火",
+  水: "水",
+  木: "木",
+  金: "金",
+  土: "土",
+  日: "日",
+} as const;
+
+export type EndTimeMark = (typeof EndTimeMark)[keyof typeof EndTimeMark];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const EndTimeMark = {
+  "": "",
+  "●": "●",
+  "▲": "▲",
+  "■": "■",
+} as const;
+
+export type VisitorType = (typeof VisitorType)[keyof typeof VisitorType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const VisitorType = {
+  商談: "商談",
+  一般: "一般",
+  "商談/一般": "商談/一般",
+} as const;
 
 export type PostBigSiteParams = {
   /**
@@ -426,19 +458,19 @@ export const getPostBigSiteResponseMock = (
       undefined,
     ]),
     "会期(開始)": faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      faker.date.past().toISOString().split("T")[0],
       undefined,
     ]),
     開始曜日: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      faker.helpers.arrayElement(Object.values(Weekday)),
       undefined,
     ]),
     "会期(終了)": faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      faker.date.past().toISOString().split("T")[0],
       undefined,
     ]),
     終了曜日: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      faker.helpers.arrayElement(Object.values(Weekday)),
       undefined,
     ]),
     利用施設: faker.helpers.arrayElement([
@@ -451,11 +483,11 @@ export const getPostBigSiteResponseMock = (
     ]),
     "最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了)":
       faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        faker.helpers.arrayElement(Object.values(EndTimeMark)),
         undefined,
       ]),
     来場対象者: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      faker.helpers.arrayElement(Object.values(VisitorType)),
       undefined,
     ]),
     入場料について: faker.helpers.arrayElement([
