@@ -250,15 +250,25 @@ export type PostBigSiteBody = {
   sortOrder?: SortOrder;
 };
 
+/**
+ * リクエスト時に指定した値が設定されます
+ */
+export type PostBigSite200Limit = number | null;
+
+/**
+ * リクエスト時に指定した値が設定されます
+ */
+export type PostBigSite200Offset = number | null;
+
 export type PostBigSite200 = {
   /** 検索結果の総件数です。limitおよびoffsetを考慮しない検索結果の件数を表示します */
   total: number;
   /** 検索結果のうち今回のレスポンスで返却している件数です */
   subtotal: number;
   /** リクエスト時に指定した値が設定されます */
-  limit: number;
+  limit: PostBigSite200Limit;
   /** リクエスト時に指定した値が設定されます */
-  offset: number;
+  offset: PostBigSite200Offset;
   metadata: ResponseMetadata;
   hits: ResponseHit[];
 };
@@ -345,16 +355,14 @@ export const getPostBigSiteResponseMock = (
     max: undefined,
     multipleOf: undefined,
   }),
-  limit: faker.number.int({
-    min: undefined,
-    max: undefined,
-    multipleOf: undefined,
-  }),
-  offset: faker.number.int({
-    min: undefined,
-    max: undefined,
-    multipleOf: undefined,
-  }),
+  limit: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    null,
+  ]),
+  offset: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined, multipleOf: undefined }),
+    null,
+  ]),
   metadata: {
     apiId: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
