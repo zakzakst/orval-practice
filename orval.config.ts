@@ -1,5 +1,4 @@
 import { defineConfig } from "orval";
-import { PostBigSiteResponseMock } from "./openapi/mock/big-site";
 
 // TODO:
 // https://zenn.dev/teamlab_fe/articles/b895776223a3b2
@@ -119,5 +118,5 @@ export default defineConfig({
     hooks: {
       afterAllFilesWrite: "npm run lint",
     },
-  }
+  },
 });

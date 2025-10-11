@@ -7,7 +7,7 @@ export type FetcherOptions<TBody = unknown> = {
 
 export async function customPutFetch<TResponse, TBody = unknown>(
   url: string,
-  { method, body, headers = {}, signal }: FetcherOptions<TBody>
+  { method, body, headers = {}, signal }: FetcherOptions<TBody>,
 ): Promise<TResponse> {
   const res = await fetch(url, {
     method,
