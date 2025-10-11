@@ -5,9 +5,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
+import { faker } from "@faker-js/faker";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
-
+import { delay, HttpResponse, http } from "msw";
 import type { Key } from "swr";
 import type { SWRMutationConfiguration } from "swr/mutation";
 import useSWRMutation from "swr/mutation";
@@ -251,15 +252,15 @@ export type PostBigSiteBody = {
 
 export type PostBigSite200 = {
   /** 検索結果の総件数です。limitおよびoffsetを考慮しない検索結果の件数を表示します */
-  total?: number;
+  total: number;
   /** 検索結果のうち今回のレスポンスで返却している件数です */
-  subtotal?: number;
+  subtotal: number;
   /** リクエスト時に指定した値が設定されます */
-  limit?: number;
+  limit: number;
   /** リクエスト時に指定した値が設定されます */
-  offset?: number;
-  metadata?: ResponseMetadata;
-  hits?: ResponseHit[];
+  offset: number;
+  metadata: ResponseMetadata;
+  hits: ResponseHit[];
 };
 
 /**
@@ -330,3 +331,172 @@ export const usePostBigSite = <TError = AxiosError<null | null | null>>(
     ...query,
   };
 };
+
+export const getPostBigSiteResponseMock = (
+  overrideResponse: Partial<PostBigSite200> = {},
+): PostBigSite200 => ({
+  total: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  subtotal: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  limit: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  offset: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  metadata: {
+    apiId: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    title: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    datasetId: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    datasetTitle: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    datasetDesc: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    dataTitle: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    dataDesc: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    sheetname: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    version: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    created: faker.helpers.arrayElement([
+      faker.date.past().toISOString().split("T")[0],
+      undefined,
+    ]),
+    updated: faker.helpers.arrayElement([
+      faker.date.past().toISOString().split("T")[0],
+      undefined,
+    ]),
+  },
+  hits: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    row: faker.helpers.arrayElement([
+      faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      undefined,
+    ]),
+    展示会名: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    "会期(開始)": faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    開始曜日: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    "会期(終了)": faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    終了曜日: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    利用施設: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    開催時間: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    "最終日の終了時刻(●:30分前に終了　▲:1時間前に終了　■:2時間前に終了)":
+      faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+    来場対象者: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    入場料について: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    内容: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    連絡先: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    TEL: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    URL: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+  })),
+  ...overrideResponse,
+});
+
+export const getPostBigSiteMockHandler = (
+  overrideResponse?:
+    | PostBigSite200
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<PostBigSite200> | PostBigSite200),
+) => {
+  return http.post(
+    "*/t001001d0000000001-1db9fd22025886d3d5c9607d5c24fdf0-0/json",
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === "function"
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getPostBigSiteResponseMock(),
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    },
+  );
+};
+export const getApiMock = () => [getPostBigSiteMockHandler()];

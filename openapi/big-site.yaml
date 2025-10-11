@@ -78,6 +78,13 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/ResponseHit"
+                required:
+                  - total
+                  - subtotal
+                  - limit
+                  - offset
+                  - metadata
+                  - hits
         "400":
           description: リクエストパラメータが不正です
         "405":
