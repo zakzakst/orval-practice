@@ -21,8 +21,10 @@
       "typescript": false,
       "yaml": false
     },
-    "editor.codeActionsOnSave": {
-      "source.fixAll.biome": "explicit"
-    }
+    // "editor.codeActionsOnSave": {
+    //   "source.fixAll.biome": "explicit"
+    // },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
