@@ -11,10 +11,23 @@ import { Input } from "@/components/ui/input";
 import type { EndTimeMark, VisitorType, Weekday } from "@/orval/big-site";
 
 const formSchema = z.object({
-  name: z.string().min(1, {
-    error: "入力必須項目です",
-  }),
+  name: z
+    .string({
+      error: "入力必須項目です",
+    })
+    .min(1, {
+      error: "入力必須項目です",
+    }),
+  startDate: z
+    .string({
+      error: "入力必須項目です",
+    })
+    .min(1, {
+      error: "入力必須項目です",
+    }),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 const WeekdayItems: Item<Weekday>[] = [
   {
@@ -78,14 +91,14 @@ const VisitorItems: Item<VisitorType>[] = [
 ];
 
 export const Form = () => {
-  const { control, watch } = useForm<z.infer<typeof formSchema>>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     mode: "onChange",
     resolver: zodResolver(formSchema),
     // defaultValues: {
     //   name: "",
     // },
   });
-  const [startDate, setStartDate] = useState<Date>();
+  // const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [startWeekday, setStartWeekday] = useState<Weekday>();
   const [endWeekday, setEndWeekday] = useState<Weekday>();
@@ -93,6 +106,10 @@ export const Form = () => {
   const [visitor, setVisitor] = useState<VisitorType>();
 
   const values = watch();
+
+  const onSubmit = (values: FormValues) => {
+    console.log(values);
+  };
 
   return (
     <div>
@@ -104,8 +121,7 @@ export const Form = () => {
         render={({ field, fieldState: { error } }) => (
           <>
             <Input
-              name="展示会名"
-              value={field.value}
+              value={field.value || ""}
               onChange={(value) => {
                 field.onChange(value);
               }}
@@ -116,7 +132,30 @@ export const Form = () => {
       />
 
       {/* 会期(開始) */}
-      <DatePicker className="w-full" date={startDate} onChange={setStartDate} />
+      <Controller
+        name="startDate"
+        control={control}
+        render={({ field, fieldState: { error } }) => {
+          const date = field.value ? new Date(field.value) : undefined;
+          const handleOnChange = (date: Date | undefined) => {
+            if (!date) {
+              field.onChange(undefined);
+            } else {
+              field.onChange(date.toLocaleDateString());
+            }
+          };
+          return (
+            <>
+              <DatePicker
+                className="w-full"
+                date={date}
+                onChange={handleOnChange}
+              />
+              {error && <p className="text-destructive">{error.message}</p>}
+            </>
+          );
+        }}
+      />
       {/* 開始曜日 */}
       <SelectList<Weekday>
         className="w-full"
@@ -163,6 +202,11 @@ export const Form = () => {
       <Input name="TEL" />
       {/* URL */}
       <Input name="URL" />
+      <div>
+        <button type="button" onClick={handleSubmit(onSubmit)}>
+          送信
+        </button>
+      </div>
     </div>
   );
 };
