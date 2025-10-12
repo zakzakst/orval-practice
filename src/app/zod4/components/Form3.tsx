@@ -1,11 +1,20 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 import { DatePicker } from "@/components/common/date-picker";
 import type { Item } from "@/components/common/select-list";
 import { SelectList } from "@/components/common/select-list";
 import { Input } from "@/components/ui/input";
 import type { EndTimeMark, VisitorType, Weekday } from "@/orval/big-site";
+
+const formSchema = z.object({
+  name: z.string().min(1, {
+    error: "入力必須項目です",
+  }),
+});
 
 const WeekdayItems: Item<Weekday>[] = [
   {
@@ -69,6 +78,13 @@ const VisitorItems: Item<VisitorType>[] = [
 ];
 
 export const Form = () => {
+  const { control, watch } = useForm<z.infer<typeof formSchema>>({
+    mode: "onChange",
+    resolver: zodResolver(formSchema),
+    // defaultValues: {
+    //   name: "",
+    // },
+  });
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [startWeekday, setStartWeekday] = useState<Weekday>();
@@ -76,10 +92,29 @@ export const Form = () => {
   const [endTime, setEndTime] = useState<EndTimeMark>();
   const [visitor, setVisitor] = useState<VisitorType>();
 
+  const values = watch();
+
   return (
     <div>
+      <div>{JSON.stringify(values)}</div>
       {/* 展示会名 */}
-      <Input name="展示会名" />
+      <Controller
+        name="name"
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <>
+            <Input
+              name="展示会名"
+              value={field.value}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
+            />
+            {error && <p className="text-destructive">{error.message}</p>}
+          </>
+        )}
+      />
+
       {/* 会期(開始) */}
       <DatePicker className="w-full" date={startDate} onChange={setStartDate} />
       {/* 開始曜日 */}
