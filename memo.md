@@ -1,6 +1,12 @@
-- フォームのread only
+- openapi の enum の捌き方について考える（現状レスポンス形式からフォームの値を考えているが、新規追加用の API を考えて enum を設定するほうが順序として正しそう）
+- calendar の入力制限について調べる
+- MUI の処理の方法参考にする
+  - read only
+  - undefined
+  - セレクトボックスなどで、選択中の項目を選択した時の挙動（クリアされる？）
+- フォームの read only
 - 内容切替のフォームのバリデーション
-- csv出力
-- openapiのnullable: true使ってみる
-https://swagger.io/docs/specification/v3_0/data-models/enums/
-- biomeとvscodeの連動
+- csv 出力
+- openapi の nullable: true 使ってみる
+  https://swagger.io/docs/specification/v3_0/data-models/enums/
+- biome と vscode の連動
