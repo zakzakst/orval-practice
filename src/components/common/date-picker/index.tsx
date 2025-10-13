@@ -37,7 +37,12 @@ export const DatePicker = ({
           variant="outline"
           className={cn("justify-between font-normal", className)}
         >
-          {date ? date.toLocaleDateString() : placeholder}
+          {/* TODO: 日付の表示書式指定方法 */}
+          {date ? (
+            date.toLocaleDateString()
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
           <CalendarIcon />
         </Button>
       </PopoverTrigger>
