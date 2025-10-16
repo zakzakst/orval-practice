@@ -27,7 +27,7 @@ export const RadioLabelGroup = <T extends string = string>({
 
   return (
     <RadioGroup
-      value={value || ""}
+      value={value || null}
       onValueChange={onChange}
       className={className}
     >
