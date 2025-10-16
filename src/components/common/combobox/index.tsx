@@ -27,7 +27,7 @@ export type Item<T extends string = string> = {
 type Props<T extends string = string> = {
   items: Item<T>[];
   value?: T;
-  onChange: (value: T) => void;
+  onChange: (value: T | null) => void;
   className?: string;
   placeholder?: ReactNode;
   inputPlaceholder?: string;
@@ -76,8 +76,9 @@ export const Combobox = <T extends string = string>({
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    // onChange(currentValue === value ? "" : currentValue);
-                    onChange(currentValue as T);
+                    onChange(
+                      currentValue === value ? null : (currentValue as T)
+                    );
                     setOpen(false);
                   }}
                 >
