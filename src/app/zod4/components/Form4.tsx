@@ -15,6 +15,7 @@ import { RadioLabelGroup } from "@/components/common/radio-label-group";
 // - 招待券持参者無料（チェックボックス）
 // - 補足（テキストボックス）
 // 未定
+// - 補足（テキストボックス 必須）
 // その他
 // - 補足（テキストボックス 必須）
 
