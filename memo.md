@@ -13,3 +13,13 @@
 - openapi の nullable: true 使ってみる
   https://swagger.io/docs/specification/v3_0/data-models/enums/
 - biome と vscode の連動
+
+- https://github.com/radix-ui/primitives/blob/main/packages/react/radio-group/src/radio-group.tsx#L74
+- https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/checkbox.tsx#L48
+- https://github.com/radix-ui/primitives/blob/main/packages/react/use-controllable-state/src/use-controllable-state.tsx
+
+- 初期値のみ外から設定できればいい
+  - ⇒ defaultValue 設定を Props で渡す（uncontrollable にする）
+- 入力値を外から変更できるようにしたい
+  - ⇒ value と連動させる（controllable にする）
+  - ※ 例：（別のコンポーネントの）ボタンをクリックしたら、あるチェックボックスの設定値をクリアする など
