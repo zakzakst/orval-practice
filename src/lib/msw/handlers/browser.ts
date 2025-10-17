@@ -11,5 +11,5 @@ export const handlers: RequestHandler[] = [
   // ...getTodosApiMock(),
   // ...getUsersApiMock(),
   // ...getSchedulesApiMock(),
-  getPostBigSiteMockHandler(PostBigSiteResponseMock),
+  // getPostBigSiteMockHandler(PostBigSiteResponseMock),
 ];
