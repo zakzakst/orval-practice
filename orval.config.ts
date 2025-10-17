@@ -1,8 +1,19 @@
+// import dotenv from "dotenv";
 import { defineConfig } from "orval";
+
+// dotenv.config({
+//   path:
+//     process.env.NODE_ENV === "production"
+//       ? ".env.production"
+//       : ".env.development",
+// });
 
 // TODO:
 // https://zenn.dev/teamlab_fe/articles/b895776223a3b2
 // https://github.com/orval-labs/orval/blob/master/samples/react-query/custom-fetch/src/custom-fetch.ts
+
+const apiBaseUrl = process.env.API_BASE_URL || "";
+// console.log(process.env);
 
 export default defineConfig({
   // users: {
@@ -103,7 +114,8 @@ export default defineConfig({
     output: {
       target: "./src/orval/big-site.ts",
       client: "swr",
-      baseUrl: "https://service.api.metro.tokyo.lg.jp/api",
+      // baseUrl: "https://service.api.metro.tokyo.lg.jp/api",
+      baseUrl: apiBaseUrl,
       mock: true,
       // override: {
       //   operations: {
