@@ -2,6 +2,8 @@
   - https://qiita.com/waiwaiwait/items/47a8c19bfc1209df7e78
     - ⇒ 考えていたフォーム切り替えと違った
   - https://t-cr.jp/article/5n41j3s6r4m5o0r
+  - https://t-cr.jp/article/9zb1j4bkcte0ivw
+    - ⇒ 上手くいかなかった
 - openapi の enum の捌き方について考える（現状レスポンス形式からフォームの値を考えているが、新規追加用の API を考えて enum を設定するほうが順序として正しそう）
 - calendar の入力制限について調べる
 - MUI の処理の方法参考にする（やっぱり radix-ui を参考にする）
