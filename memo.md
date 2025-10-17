@@ -1,3 +1,6 @@
+- やってみる
+  - https://orval.dev/reference/configuration/output#variables
+  - https://zenn.dev/koichi_hayakawa/articles/c2e2ef7f07e0fa
 - 下記読んで試してみる
   - https://qiita.com/waiwaiwait/items/47a8c19bfc1209df7e78
     - ⇒ 考えていたフォーム切り替えと違った
